@@ -1,5 +1,5 @@
 import { Header, Segment, Grid, Input, Divider, Button, Select } from 'semantic-ui-react'
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Lyric from './Lyric';
 
 function Home() {
@@ -13,10 +13,6 @@ function Home() {
   const [key, setKey] = useState("");
   const [language, setLanguage] = useState("");
 
-  useEffect(() => {
-    makeRequest();
-  }, [displayLyric]);
-
   function makeRequest() {
     const requestOptions = {
       method: 'POST',
@@ -26,18 +22,17 @@ function Home() {
         theme: theme,
         style: style,
         mood: mood,
-        lang: "en",
-        key: "E"
+        lang: language,
+        key: key
       })
     };
 
     fetch("http://localhost:5001/generate", requestOptions)
     .then(response => response.json())
-    .then(data => setText(data.music));
-  }
-
-  function updateDisplay() {
-    setDisplayLyric(true)
+    .then(data => {
+      setDisplayLyric(true)
+      setText(data.music.join("\n"))
+    });
   }
 
   function updateGenre(event) {
@@ -104,7 +99,7 @@ function Home() {
           </Grid.Column>
           <Grid.Column>
             <div style={{visibility: 'hidden'}}>-</div>
-            <Button primary onClick={updateDisplay}>Submit</Button>
+            <Button primary onClick={makeRequest}>Submit</Button>
           </Grid.Column>
         </Grid.Row>
         <Divider/>
