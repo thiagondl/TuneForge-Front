@@ -4,7 +4,7 @@ function Lyric(props) {
   return (
     <>
       <Grid.Row>
-        <Grid.Column>{props.genre}</Grid.Column> 
+        <Grid.Column>{props.text}</Grid.Column> 
       </Grid.Row>
     </>
   );

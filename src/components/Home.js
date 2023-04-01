@@ -1,14 +1,38 @@
 import { Header, Segment, Grid, Input, Divider, Button } from 'semantic-ui-react'
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Lyric from './Lyric';
 
 function Home() {
 
   const [displayLyric, setDisplayLyric] = useState(false);
+  const [text, setText] = useState();
   const [genre, setGenre] = useState("");
   const [theme, setTheme] = useState("");
   const [style, setStyle] = useState("");
   const [mood, setMood] = useState("");
+
+  useEffect(() => {
+    makeRequest();
+  }, [displayLyric]);
+
+  function makeRequest() {
+    const requestOptions = {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        genre: genre,
+        theme: theme,
+        style: style,
+        mood: mood,
+        lang: "en",
+        key: "E"
+      })
+    };
+
+    fetch("http://localhost:5001/generate", requestOptions)
+    .then(response => response.json())
+    .then(data => setText(data.music));
+  }
 
   function updateDisplay() {
     setDisplayLyric(true)
@@ -59,7 +83,7 @@ function Home() {
           </Grid.Column>
         </Grid.Row>
         <Divider/>
-        {displayLyric ? <Lyric genre={genre} theme={theme} style={style} mood={mood}></Lyric>: <></>}
+        {displayLyric ? <Lyric text={text} ></Lyric>: <></>}
       </Grid>
     </>
   );
