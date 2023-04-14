@@ -4,7 +4,7 @@ import '../App.css';
 import chords from './chords.json';
 
 function ListPopup(props) {
-    if(props.value!='' && (props.value.startsWith(">") || props.value.startsWith("["))){
+    if(props.value!=='' && (props.value.startsWith(">") || props.value.startsWith("["))){
         return (<pre>{props.value.replace('>','')}</pre>);
     }else {
         var arr = props.value.split('.');
@@ -36,11 +36,9 @@ function MyPopupChords(props) {
   }
 
 function Chord (props) {
-  console.log(props.text)
     const music = props.text.split("\n");
 
     const x = music.shift().replace('Key: ','');
-    console.log(x);
 
     return (<div>
         <Header size='medium'>Tom: {x}</Header>
@@ -49,7 +47,6 @@ function Chord (props) {
 }
 
 function Lyric(props) {
-  console.log(props)
   return (
     <>
       <Grid.Row>

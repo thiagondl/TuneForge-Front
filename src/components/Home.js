@@ -1,38 +1,54 @@
 import { Header, Segment, Grid, Input, Divider, Button, Select } from 'semantic-ui-react'
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Lyric from './Lyric';
 
 function Home() {
 
   const [displayLyric, setDisplayLyric] = useState(false);
-  const [text, setText] = useState();
+  const [text, setText] = useState("");
   const [genre, setGenre] = useState("");
   const [theme, setTheme] = useState("");
   const [style, setStyle] = useState("");
   const [mood, setMood] = useState("");
   const [key, setKey] = useState("");
   const [language, setLanguage] = useState("");
+  const [URL, setURL] = useState("");
+
+  useEffect(() => {
+
+    if (URL !== "") {
+      const sse = new EventSource(URL);
+      sse.onmessage = e => setText(prevText => prevText + JSON.parse(e.data).text);
+      sse.onerror = e => {
+        console.log('Deu erro!!')
+        sse.close()
+      };
+
+      return () => {
+        sse.close();
+      };
+    }
+
+  }, [URL])
 
   function makeRequest() {
-    const requestOptions = {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
+
+    setText("");
+
+    const params = new URLSearchParams({
         genre: genre,
         theme: theme,
         style: style,
         mood: mood,
         lang: language,
         key: key
-      })
-    };
-
-    fetch("http://localhost:5001/generate", requestOptions)
-    .then(response => response.json())
-    .then(data => {
-      setDisplayLyric(true)
-      setText(data.music.join("\n"))
     });
+
+    const URL = "http://localhost:5001/generate?" + params.toString();
+    setURL(URL);
+
+    setDisplayLyric(true)
+
   }
 
   function updateGenre(event) {
